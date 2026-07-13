@@ -3,6 +3,9 @@
 A Databricks Lakehouse pipeline that turns raw LMS, video, quiz, and discussion-forum activity into engagement scores, dropout risk tiers, and instructor/leadership dashboards for an online learning platform.
 
 > Built on Azure Databricks (Delta Lake, Auto Loader, PySpark) and orchestrated with Apache Airflow.
+
+![Architecture](assets/architecture.png)
+
 ---
 
 ## 📌 Overview
@@ -138,14 +141,18 @@ Tracks students through `enrolled → started → 25% → 50% → 75% → comple
 
 Two DAGs give the pipeline a dual schedule: a fast hourly loop for ingestion, and a slower daily loop for aggregation and reporting.
 
-![Airflow Orchestration](assets/airflow_orchestration.png)
+![Airflow Orchestration](assets/Airflow_orchestration.png)
 
-| DAG | Schedule | Steps |
-|---|---|---|
-| **Bronze → Silver** | Hourly (`0 * * * *`) | `check_bronze_freshness` → `run_ingestion_job` |
-| **Instructor Dashboard (Gold)** | Daily @ 05:00 (`0 5 * * *`) | `check_silver_freshness` → `run_dashboard_job` |
+| DAG | Schedule | Steps | Graph |
+|---|---|---|---|
+| **Bronze → Silver** | Hourly (`0 * * * *`) | `check_bronze_freshness` → `run_ingestion_job` | ![Bronze freshness then ingestion](assets/bronze_freshness_run_ingestion.png) |
+| **Instructor Dashboard (Gold)** | Daily @ 05:00 (`0 5 * * *`) | `check_silver_freshness` → `run_dashboard_job` | ![Silver freshness then dashboard](assets/silver_freshness_run_dashboard.png) |
 
 Both DAGs run on `DatabricksRunNowOperator`, use `catchup=False` to avoid backlog replay on redeploy, and route failures through a shared `slack_alert` callback (`on_failure_callback`) that posts the failed task and DAG ID to Slack. The daily DAG additionally sets `max_active_runs=1` so a slow run can't overlap with the next day's trigger.
+
+The underlying Databricks Jobs mirror this same freshness-gated shape at the notebook-graph level — a Bronze ingestion task feeding a Silver engagement update:
+
+![Bronze to Silver engagement update graph](assets/orchestration_daily.png)
 
 Freshness is enforced as a hard gate *before* the actual job runs — Bronze must have received data in the last 70 minutes, Silver must be no more than ~25 hours stale — and a breach raises an exception (`BRONZE_SLA_BREACH: Data not updated in last 70 mins!`) that fails the task and fires the Slack alert, rather than silently running a job against stale data.
 
