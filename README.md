@@ -3,9 +3,6 @@
 A Databricks Lakehouse pipeline that turns raw LMS, video, quiz, and discussion-forum activity into engagement scores, dropout risk tiers, and instructor/leadership dashboards for an online learning platform.
 
 > Built on Azure Databricks (Delta Lake, Auto Loader, PySpark) and orchestrated with Apache Airflow.
-
-![Architecture](assets/architecture.png)
-
 ---
 
 ## 📌 Overview
