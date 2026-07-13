@@ -1,0 +1,59 @@
+<svg viewBox="0 0 1000 780" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="1000" height="780" fill="#ffffff"/>
+  <text x="500" y="36" text-anchor="middle" font-size="22" font-weight="700" fill="#1f2937">Dropout Risk Classification Logic</text>
+
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#4b5563"/>
+    </marker>
+  </defs>
+
+  <!-- Start -->
+  <rect x="360" y="60" width="280" height="50" rx="10" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.5"/>
+  <text x="500" y="90" text-anchor="middle" font-size="13" fill="#1f2937">student_course_engagement row</text>
+  <line x1="500" y1="110" x2="500" y2="140" stroke="#4b5563" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- Decision 1 -->
+  <polygon points="500,140 700,225 500,310 300,225" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="500" y="210" text-anchor="middle" font-size="11.5" fill="#7f1d1d">days_since_last_active &gt; 14</text>
+  <text x="500" y="228" text-anchor="middle" font-size="11.5" fill="#7f1d1d">AND</text>
+  <text x="500" y="246" text-anchor="middle" font-size="11.5" fill="#7f1d1d">video_completion_rate &lt; 30%?</text>
+
+  <!-- YES -> HIGH -->
+  <line x1="700" y1="225" x2="800" y2="225" stroke="#4b5563" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="740" y="215" font-size="12" font-weight="700" fill="#16a34a">YES</text>
+  <rect x="800" y="195" width="170" height="60" rx="10" fill="#dc2626"/>
+  <text x="885" y="222" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">HIGH</text>
+  <text x="885" y="240" text-anchor="middle" font-size="10" fill="#fde8e8">risk_tier</text>
+
+  <!-- NO -> decision 2 -->
+  <line x1="500" y1="310" x2="500" y2="345" stroke="#4b5563" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="515" y="330" font-size="12" font-weight="700" fill="#dc2626">NO</text>
+
+  <!-- Decision 2 -->
+  <polygon points="500,345 730,455 500,565 270,455" fill="#fff7ed" stroke="#ea580c" stroke-width="1.5"/>
+  <text x="500" y="430" text-anchor="middle" font-size="11.5" fill="#7c2d12">days_since_last_active &gt; 7</text>
+  <text x="500" y="448" text-anchor="middle" font-size="11.5" fill="#7c2d12">OR quiz_pass_rate &lt; 40%</text>
+  <text x="500" y="466" text-anchor="middle" font-size="11.5" fill="#7c2d12">OR video_completion_rate &lt; 25%?</text>
+
+  <!-- YES -> MEDIUM -->
+  <line x1="730" y1="455" x2="830" y2="455" stroke="#4b5563" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="770" y="445" font-size="12" font-weight="700" fill="#16a34a">YES</text>
+  <rect x="830" y="425" width="150" height="60" rx="10" fill="#ea580c"/>
+  <text x="905" y="452" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">MEDIUM</text>
+  <text x="905" y="470" text-anchor="middle" font-size="10" fill="#fde3d0">risk_tier</text>
+
+  <!-- NO -> LOW -->
+  <line x1="500" y1="565" x2="500" y2="600" stroke="#4b5563" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="515" y="585" font-size="12" font-weight="700" fill="#dc2626">NO</text>
+  <rect x="410" y="600" width="180" height="55" rx="10" fill="#16a34a"/>
+  <text x="500" y="626" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">LOW</text>
+  <text x="500" y="644" text-anchor="middle" font-size="10" fill="#dcfce7">risk_tier (default)</text>
+
+  <!-- Longitudinal tracking box -->
+  <line x1="500" y1="655" x2="500" y2="685" stroke="#4b5563" stroke-width="2" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+  <rect x="150" y="685" width="700" height="80" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="500" y="710" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1e3a8a">Week-over-week longitudinal check (LAG over student_id + course_id, ordered by week)</text>
+  <text x="500" y="730" text-anchor="middle" font-size="11.5" fill="#1e3a8a">risk_worsened = 1 if  prev_risk = LOW → risk_tier = MEDIUM   OR   prev_risk = MEDIUM → risk_tier = HIGH</text>
+  <text x="500" y="750" text-anchor="middle" font-size="10.5" fill="#6b7280">(a direct LOW → HIGH jump between two snapshots is not currently flagged — see Known Issues)</text>
+</svg>
