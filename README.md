@@ -138,7 +138,7 @@ Tracks students through `enrolled → started → 25% → 50% → 75% → comple
 
 Two DAGs give the pipeline a dual schedule: a fast hourly loop for ingestion, and a slower daily loop for aggregation and reporting.
 
-![Airflow Orchestration](assets/airflow_orchestration.png)
+![Airflow Orchestration](assets/Airflow orchestration.png)
 
 | DAG | Schedule | Steps |
 |---|---|---|
@@ -155,7 +155,7 @@ Freshness is enforced as a hard gate *before* the actual job runs — Bronze mus
 
 ## 📊 Results — Live Dashboard
 
-![Dashboard](assets/dashboard_results.png)
+![Dashboard](assets/Dashboard.png)
 
 Snapshot from the current run over the generated dataset:
 
