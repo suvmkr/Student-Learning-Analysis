@@ -115,16 +115,10 @@ Per `course_id` + `report_date`: active students, completion rate, avg quiz scor
 ### Instructor Dashboard
 Per instructor, refreshed weekly: active courses, total active students, average completion rate, a student-satisfaction proxy (average quiz pass rate), count of students at high dropout risk, and a global `RANK() OVER (ORDER BY avg_completion_rate DESC)` performance rank. Historical comparison against a rolling 4-week average classifies each instructor's trend as IMPROVING / DECLINING / STABLE / NEW. Written with `append` mode (current week's partition is deleted and reinserted on rerun, keeping the table idempotent while preserving history).
 
-![Instructor Dashboard Design](assets/instructor_dashboard_design.png)
-
 **The "At-Risk" Monitor** — the dashboard's core early-warning feature: instructors previously only discovered dropouts *after* the course ended. `students_at_high_dropout_risk` is now computed straight from the Silver risk profile and refreshed automatically every morning, handing instructors a prioritized list of struggling students before they quit.
-
-![At-Risk Monitor](assets/at_risk_monitor.png)
 
 ### Course Completion Funnel
 Tracks students through `enrolled → started → 25% → 50% → 75% → completed`, computes the drop-off percentage at every stage, and automatically identifies each course's `biggest_dropoff_stage`. Cohort analysis compares funnels by enrollment quarter (e.g. 2024-Q1 vs 2024-Q2) in the same table via an `analysis_scope` column, so no separate join is needed to compare cohorts.
-
-![Course Completion Funnel](assets/completion_funnel_design.png)
 
 ---
 
@@ -137,8 +131,6 @@ Tracks students through `enrolled → started → 25% → 50% → 75% → comple
 ## 🔄 Orchestration — Apache Airflow
 
 Two DAGs give the pipeline a dual schedule: a fast hourly loop for ingestion, and a slower daily loop for aggregation and reporting.
-
-![Airflow Orchestration](assets/Airflow_orchestration.png)
 
 | DAG | Schedule | Steps | Graph |
 |---|---|---|---|
